@@ -1,24 +1,28 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Login from './components/Login';      // <--- NO curly braces
+import Register from './components/Register'; // <--- NO curly braces
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <div className="App">
+        {/* Temporary Navigation Bar */}
+        <nav style={{ padding: '20px', backgroundColor: '#eee' }}>
+          <Link to="/register" style={{ marginRight: '20px' }}>Register</Link>
+          <Link to="/login">Login</Link>
+        </nav>
+
+        {/* This is where the pages switch */}
+        <div style={{ padding: '20px' }}>
+          <Routes>
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<h1>Welcome to Grocery Store</h1>} />
+          </Routes>
+        </div>
+      </div>
+    </Router>
   );
 }
 

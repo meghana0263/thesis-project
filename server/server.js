@@ -1,8 +1,10 @@
+
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const userRoutes = require('./routes/users');
 const productRoutes = require('./routes/products');
+const orderRoutes = require('./routes/orders');
 
 require('dotenv').config();
 
@@ -14,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Database Connection
 mongoose.connect(process.env.MONGO_URI)

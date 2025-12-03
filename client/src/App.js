@@ -1,29 +1,40 @@
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Login from './components/Login';      // <--- NO curly braces
-import Register from './components/Register'; // <--- NO curly braces
+import Login from './components/Login';      
+import Register from './components/Register'; 
+import Home from './components/Home';
+import { CartProvider } from './context/CartContext'; 
+import Cart from './components/Cart'; 
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        {/* Temporary Navigation Bar */}
-        <nav style={{ padding: '20px', backgroundColor: '#eee' }}>
-          <Link to="/register" style={{ marginRight: '20px' }}>Register</Link>
-          <Link to="/login">Login</Link>
-        </nav>
+    <CartProvider> 
+      <Router>
+        <div className="App">
+          <nav style={{ padding: '20px', backgroundColor: '#333', color: '#fff', display: 'flex', justifyContent: 'space-between' }}>
+            <div>
+               <Link to="/" style={{ color: 'white', marginRight: '20px', textDecoration: 'none', fontWeight: 'bold' }}>GROCERY STORE</Link>
+            </div>
+            <div>
+              <Link to="/register" style={{ color: 'white', marginRight: '20px' }}>Register</Link>
+              <Link to="/login" style={{ color: 'white', marginRight: '20px' }}>Login</Link>
+              <Link to="/cart" style={{ color: '#f1c40f', fontWeight: 'bold' }}>Cart</Link>
+            </div>
+          </nav>
 
-        {/* This is where the pages switch */}
-        <div style={{ padding: '20px' }}>
-          <Routes>
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/" element={<h1>Welcome to Grocery Store</h1>} />
-          </Routes>
+          <div style={{ padding: '20px' }}>
+            <Routes>
+              <Route path="/register" element={<Register />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/cart" element={<Cart />} /> {/* New Route */}
+            </Routes>
+          </div>
         </div>
-      </div>
-    </Router>
-  );
+      </Router>
+    </CartProvider> 
+    );
 }
 
 export default App;

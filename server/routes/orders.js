@@ -29,4 +29,18 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
+// @route   GET /api/orders/myorders
+// @desc    Get logged in user orders
+// @access  Private
+router.get('/myorders', auth, async (req, res) => {
+    try {
+        // Find orders where the 'user' field matches the ID in the token
+        const orders = await Order.find({ user: req.user.id }).sort({ createdAt: -1 });
+        res.json(orders);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 module.exports = router;

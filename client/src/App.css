@@ -1,38 +1,201 @@
-.App {
+/* --- GLOBAL STYLES --- */
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f7f6; /* Light gray background */
+  color: #333;
+}
+
+h1, h2, h3 {
+  color: #2c3e50;
+}
+
+/* --- NAVBAR --- */
+nav {
+  background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%); /* Modern Gradient */
+  padding: 1rem 2rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+nav a {
+  text-decoration: none;
+  color: rgba(255, 255, 255, 0.9);
+  margin-left: 20px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+}
+
+nav a:hover {
+  color: #fff;
+  transform: translateY(-2px); /* Slight lift on hover */
+  text-shadow: 0 0 5px rgba(255,255,255,0.5);
+}
+
+.brand-logo {
+  font-weight: bold;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+/* --- CONTAINERS --- */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* --- CARDS (Products) --- */
+
+/* --- REPLACE THIS SECTION IN App.css --- */
+
+.product-grid {
+  display: flex;             /* Switch to Flexbox */
+  flex-wrap: wrap;           /* Allow items to wrap to next line */
+  gap: 30px;                 /* Space between cards */
+  padding: 20px 0;
+  justify-content: center;   /* Center them in the middle of the screen */
+}
+
+.product-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
+  width: 300px;              
+  flex-grow: 0;              
+  flex-shrink: 0;            
+}
+
+.product-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-bottom: 1px solid #eee;
+}
+
+.product-card:hover {
+  transform: translateY(-5px); /* Floats up */
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
+
+.card-body {
+  padding: 20px;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.price-tag {
+  color: #27ae60;
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin: 10px 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* --- BUTTONS --- */
+button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  border: none;
+  letter-spacing: 0.5px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+/* Primary Button (Add to Cart, Login) */
+.btn-primary {
+  background-color: #3498db;
   color: white;
+  padding: 10px 20px;
+  border-radius: 25px;
+  box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
 }
 
-.App-link {
-  color: #61dafb;
+.btn-primary:hover {
+  background-color: #2980b9;
+  transform: scale(1.05);
+  box-shadow: 0 6px 8px rgba(52, 152, 219, 0.3);
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Success Button (Checkout, Add Product) */
+.btn-success {
+  background-color: #2ecc71;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 25px;
+  width: 100%;
+  font-size: 1.1rem;
+}
+
+.btn-success:hover {
+  background-color: #27ae60;
+}
+
+/* Danger Button (Delete, Remove) */
+.btn-danger {
+  background-color: #e74c3c;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+/* --- FORMS (Login/Register/Admin) --- */
+.form-container {
+  background: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  max-width: 400px;
+  margin: 50px auto;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s;
+  box-sizing: border-box; /* Fixes padding issues */
+}
+
+input:focus, textarea:focus {
+  border-color: #3498db;
+  outline: none;
+  background-color: #fff;
+}
+
+/* --- TABLES (Admin/Cart) --- */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+th {
+  background-color: #34495e;
+  color: white;
+  padding: 15px;
+  text-align: left;
+}
+
+td {
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+tr:last-child td {
+  border-bottom: none;
 }

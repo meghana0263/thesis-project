@@ -20,24 +20,22 @@ const Home = () => {
     }, []);
 
     return (
-        <div>
-            <h1 style={{ textAlign: 'center', margin: '20px 0' }}>Latest Products</h1>
+        <div className="container">
+            <h1 style={{ textAlign: 'center', margin: '40px 0', fontSize: '2.5rem' }}>Fresh Groceries</h1>
             
-            {/* Grid Layout for Products */}
-            <div style={gridStyle}>
+            <div className="product-grid">
                 {products.map(product => (
-                    <div key={product._id} style={cardStyle}>
-                        <img 
-                            src={product.image} 
-                            alt={product.name} 
-                            style={imageStyle} 
-                        />
-                        <div style={{ padding: '15px' }}>
+                    <div key={product._id} className="product-card">
+                        <img src={product.image} alt={product.name} />
+                        <div className="card-body">
                             <h3>{product.name}</h3>
-                            <p style={{ color: '#555', fontSize: '14px' }}>{product.description}</p>
-                            <h4 style={{ color: '#27ae60' }}>${product.price}</h4>
-                            <button style={buttonStyle} onClick={() => addToCart(product)}>
-                                Add to Cart
+                            <p style={{ color: '#7f8c8d', fontSize: '0.9rem' }}>{product.description}</p>
+                            <div className="price-tag">${product.price.toFixed(2)}</div>
+                            <button 
+                                className="btn-primary" 
+                                onClick={() => addToCart(product)}
+                            >
+                                Add to Cart 🛒
                             </button>
                         </div>
                     </div>

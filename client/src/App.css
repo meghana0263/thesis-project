@@ -50,8 +50,6 @@ nav a:hover {
 
 /* --- CARDS (Products) --- */
 
-/* --- REPLACE THIS SECTION IN App.css --- */
-
 .product-grid {
   display: flex;             /* Switch to Flexbox */
   flex-wrap: wrap;           /* Allow items to wrap to next line */

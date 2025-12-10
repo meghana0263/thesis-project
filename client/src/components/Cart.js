@@ -7,49 +7,16 @@ const Cart = () => {
     const { cart, removeFromCart } = useContext(CartContext);
     const navigate = useNavigate();
 
-    // Calculate Total
     const totalPrice = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
 
-    const checkoutHandler = async () => {
-        const token = localStorage.getItem('token');
-
-        if (!token) {
-            alert('You must be logged in to place an order!');
-            navigate('/login');
-            return;
-        }
-
-        try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-auth-token': token // Send the "ID Card"
-                }
-            };
-
-            const orderItems = cart.map((item) => ({
-                product: item._id, 
-                name: item.name,
-                qty: item.qty,
-                image: item.image,
-                price: item.price
-            }));
-
-            const orderData = {
-                orderItems: orderItems,
-                totalPrice: totalPrice
-            };
-
-            await axios.post('/api/orders', orderData, config);
-
-            alert('Order Placed Successfully! Thank you for shopping.');
-            // Ideally, we clear the cart here, but for now just redirect
-            navigate('/');
-            
-        } catch (err) {
-            console.error(err);
-            alert('Order Failed. Please try again.');
-        }
+    const checkoutHandler = () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+        alert('Please login to checkout');
+        navigate('/login');
+    } else {
+        navigate('/payment'); // <--- Just go to payment page!
+    }
     };
 
     return (
@@ -79,7 +46,7 @@ const Cart = () => {
                     
                     {/* Updated Button with Click Handler */}
                     <button onClick={checkoutHandler} style={checkoutBtn}>
-                        Place Order
+                        Proceed to Checkout
                     </button>
                 </div>
             )}

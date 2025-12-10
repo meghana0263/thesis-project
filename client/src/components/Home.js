@@ -1,9 +1,12 @@
-
+import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-import React, { useState, useEffect, useContext } from 'react'; 
-import { CartContext } from '../context/CartContext'; 
+import { CartContext } from '../context/CartContext';
+
 const Home = () => {
     const [products, setProducts] = useState([]);
+    const [filteredProducts, setFilteredProducts] = useState([]); // <--- New State for filtered list
+    const [activeCategory, setActiveCategory] = useState('All');  // <--- Track active button
+    
     const { addToCart } = useContext(CartContext);
 
     useEffect(() => {
@@ -11,6 +14,7 @@ const Home = () => {
             try {
                 const res = await axios.get('/api/products');
                 setProducts(res.data);
+                setFilteredProducts(res.data); // Initially show ALL
             } catch (err) {
                 console.error("Error fetching products:", err);
             }
@@ -19,12 +23,46 @@ const Home = () => {
         fetchProducts();
     }, []);
 
+    // Filter Function
+    const filterCategory = (category) => {
+        setActiveCategory(category);
+        if (category === 'All') {
+            setFilteredProducts(products);
+        } else {
+            const newList = products.filter(item => item.category === category);
+            setFilteredProducts(newList);
+        }
+    };
+
     return (
         <div className="container">
-            <h1 style={{ textAlign: 'center', margin: '40px 0', fontSize: '2.5rem' }}>Fresh Groceries</h1>
+            <h1 style={{ textAlign: 'center', margin: '40px 0', fontSize: '2.5rem' }}>Welcome to FreshCart</h1>
             
+            {/* --- CATEGORY BUTTONS --- */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '15px', marginBottom: '30px', flexWrap: 'wrap' }}>
+                {['All', 'Vegetables', 'Fruits', 'Dairy', 'Bakery', 'Beverages', 'Snacks'].map(cat => (
+                    <button 
+                        key={cat}
+                        onClick={() => filterCategory(cat)}
+                        style={{
+                            padding: '10px 20px',
+                            borderRadius: '20px',
+                            border: '1px solid #ddd',
+                            backgroundColor: activeCategory === cat ? '#27ae60' : 'white',
+                            color: activeCategory === cat ? 'white' : '#333',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                            transition: 'all 0.3s ease'
+                        }}
+                    >
+                        {cat}
+                    </button>
+                ))}
+            </div>
+
+            {/* --- PRODUCT GRID --- */}
             <div className="product-grid">
-                {products.map(product => (
+                {filteredProducts.map(product => (
                     <div key={product._id} className="product-card">
                         <img src={product.image} alt={product.name} />
                         <div className="card-body">
@@ -43,38 +81,6 @@ const Home = () => {
             </div>
         </div>
     );
-};
-
-// --- Simple CSS Styles (Internal) ---
-const gridStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', // Responsive grid
-    gap: '20px',
-    padding: '20px'
-};
-
-const cardStyle = {
-    border: '1px solid #ddd',
-    borderRadius: '10px',
-    overflow: 'hidden',
-    boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    textAlign: 'center'
-};
-
-const imageStyle = {
-    width: '100%',
-    height: '200px',
-    objectFit: 'cover'
-};
-
-const buttonStyle = {
-    backgroundColor: '#333',
-    color: '#fff',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '5px',
-    cursor: 'pointer',
-    marginTop: '10px'
 };
 
 export default Home;

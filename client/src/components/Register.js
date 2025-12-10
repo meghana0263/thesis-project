@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Register = () => {
-    // 1. State for Name, Email, Password
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -13,30 +12,19 @@ const Register = () => {
     const { name, email, password } = formData;
     const navigate = useNavigate();
 
-    // 2. Update state on typing
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    // 3. Submit data to Backend
     const onSubmit = async e => {
         e.preventDefault();
         try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
-            
+            const config = { headers: { 'Content-Type': 'application/json' } };
             const body = JSON.stringify({ name, email, password });
 
-            // Call the Register API
             const res = await axios.post('/api/users/register', body, config);
 
-            // Auto-login (save token)
-            console.log('Registration Success!', res.data);
-            localStorage.setItem('token', res.data.token); // Save the token immediately
-            
+            localStorage.setItem('token', res.data.token);
             alert('Registration Successful!');
-            navigate('/'); // Go to Home Page
+            navigate('/');
 
         } catch (err) {
             console.error(err.response.data);
@@ -45,44 +33,50 @@ const Register = () => {
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '50px auto' }}>
-            <h2>Create Account</h2>
+        <div className="form-container">
+            <h2 style={{ textAlign: 'center', marginBottom: '10px', color: '#2c3e50' }}>Create Account</h2>
+            <p style={{ textAlign: 'center', color: '#7f8c8d', marginBottom: '30px' }}>Join us for fresh groceries today</p>
+
             <form onSubmit={onSubmit}>
-                <div style={{ marginBottom: '10px' }}>
+                <div style={{ marginBottom: '15px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#666' }}>Full Name</label>
                     <input 
                         type="text" 
-                        placeholder="Full Name" 
                         name="name" 
                         value={name} 
                         onChange={onChange}
                         required 
-                        style={{ width: '100%', padding: '10px' }}
+                        placeholder="John Doe"
                     />
                 </div>
-                <div style={{ marginBottom: '10px' }}>
+                <div style={{ marginBottom: '15px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#666' }}>Email Address</label>
                     <input 
                         type="email" 
-                        placeholder="Email Address" 
                         name="email" 
                         value={email} 
                         onChange={onChange}
                         required 
-                        style={{ width: '100%', padding: '10px' }}
+                        placeholder="john@example.com"
                     />
                 </div>
-                <div style={{ marginBottom: '10px' }}>
+                <div style={{ marginBottom: '25px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#666' }}>Password</label>
                     <input 
                         type="password" 
-                        placeholder="Password" 
                         name="password" 
                         value={password} 
                         onChange={onChange}
                         minLength="6"
-                        style={{ width: '100%', padding: '10px' }}
+                        placeholder="Min 6 characters"
                     />
                 </div>
-                <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>Register</button>
+                <button type="submit" className="btn-primary" style={{ width: '100%' }}>Register</button>
             </form>
+
+            <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '0.9rem' }}>
+                Already have an account? <Link to="/login" style={{ color: '#3498db', fontWeight: 'bold' }}>Login</Link>
+            </p>
         </div>
     );
 };

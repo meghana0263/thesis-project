@@ -1,42 +1,28 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // Added Link
 
 const Login = () => {
-    // 1. State to hold the email and password you type
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
 
     const { email, password } = formData;
-    const navigate = useNavigate(); // Hook to move between pages
+    const navigate = useNavigate();
 
-    // 2. Update state when you type in the boxes
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    // 3. Send data to the backend when you click "Login"
     const onSubmit = async e => {
         e.preventDefault();
         try {
-            const config = {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            };
-            
+            const config = { headers: { 'Content-Type': 'application/json' } };
             const body = JSON.stringify({ email, password });
-
-            // This sends the POST request to your backend
-            const res = await axios.post('/api/users/login', body, config);
-
-            // 4. Save the "Token" in your browser storage
-            console.log('Login Success!', res.data);
-            localStorage.setItem('token', res.data.token);
             
-            alert('Login Successful!');
-            navigate('/'); // Go back to home page
-
+            const res = await axios.post('/api/users/login', body, config);
+            
+            localStorage.setItem('token', res.data.token);
+            navigate('/');
         } catch (err) {
             console.error(err.response.data);
             alert('Login Failed: ' + (err.response.data.msg || 'Server Error'));
@@ -44,33 +30,40 @@ const Login = () => {
     };
 
     return (
-        <div style={{ maxWidth: '400px', margin: '50px auto' }}>
-            <h2>Sign In</h2>
+        <div className="form-container">
+            <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#2c3e50' }}>Welcome Back</h2>
+            <p style={{ textAlign: 'center', color: '#7f8c8d', marginBottom: '30px' }}>Sign in to continue shopping</p>
+            
             <form onSubmit={onSubmit}>
-                <div style={{ marginBottom: '10px' }}>
+                <div style={{ marginBottom: '15px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#666' }}>Email Address</label>
                     <input 
                         type="email" 
-                        placeholder="Email Address" 
                         name="email" 
                         value={email} 
                         onChange={onChange}
                         required 
-                        style={{ width: '100%', padding: '10px' }}
+                        placeholder="Enter your email"
                     />
                 </div>
-                <div style={{ marginBottom: '10px' }}>
+                <div style={{ marginBottom: '25px' }}>
+                    <label style={{ display: 'block', marginBottom: '5px', color: '#666' }}>Password</label>
                     <input 
                         type="password" 
-                        placeholder="Password" 
                         name="password" 
                         value={password} 
                         onChange={onChange}
                         minLength="6"
-                        style={{ width: '100%', padding: '10px' }}
+                        placeholder="Enter your password"
                     />
                 </div>
-                <button type="submit" style={{ padding: '10px 20px', cursor: 'pointer' }}>Login</button>
+                
+                <button type="submit" className="btn-primary" style={{ width: '100%' }}>Login</button>
             </form>
+
+            <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '0.9rem' }}>
+                New customer? <Link to="/register" style={{ color: '#3498db', fontWeight: 'bold' }}>Create Account</Link>
+            </p>
         </div>
     );
 };

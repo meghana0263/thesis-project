@@ -8,6 +8,7 @@ import { CartProvider } from './context/CartContext';
 import Cart from './components/Cart'; 
 import OrderHistory from './components/OrderHistory';
 import AdminDashboard from './components/AdminDashboard';
+import Payment from './components/Payment';
 
 function App() {
   return (
@@ -16,7 +17,7 @@ function App() {
         <div className="App">
           <nav style={{ padding: '20px', backgroundColor: '#333', color: '#fff', display: 'flex', justifyContent: 'space-between' }}>
             <div>
-               <Link to="/" className="brand-logo">🌿 GROCERY STORE</Link>
+               <Link to="/" className="brand-logo">🍏 FreshCart</Link>
             </div>
             <div>
               <Link to="/register" style={{ color: 'white', marginRight: '20px' }}>Register</Link>
@@ -35,6 +36,7 @@ function App() {
               <Route path="/cart" element={<Cart />} /> 
               <Route path="/orders" element={<OrderHistory />} />
               <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/payment" element={<Payment />} />
             </Routes>
           </div>
         </div>

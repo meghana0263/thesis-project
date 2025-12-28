@@ -9,6 +9,7 @@ import Cart from './components/Cart';
 import OrderHistory from './components/OrderHistory';
 import AdminDashboard from './components/AdminDashboard';
 import Payment from './components/Payment';
+import ChatBot from './components/ChatBot';
 
 function App() {
   return (
@@ -38,11 +39,13 @@ function App() {
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/payment" element={<Payment />} />
             </Routes>
+            <ChatBot />
           </div>
         </div>
       </Router>
     </CartProvider> 
     );
+  
 }
 
 export default App;

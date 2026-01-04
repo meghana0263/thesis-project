@@ -50,12 +50,11 @@ nav a:hover {
 
 /* --- CARDS (Products) --- */
 
-.product-grid {
-  display: flex;             /* Switch to Flexbox */
-  flex-wrap: wrap;           /* Allow items to wrap to next line */
-  gap: 30px;                 /* Space between cards */
-  padding: 20px 0;
-  justify-content: center;   /* Center them in the middle of the screen */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  padding: 20px;
 }
 
 .product-card {

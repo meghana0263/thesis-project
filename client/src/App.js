@@ -10,6 +10,7 @@ import OrderHistory from './components/OrderHistory';
 import AdminDashboard from './components/AdminDashboard';
 import Payment from './components/Payment';
 import ChatBot from './components/ChatBot';
+import ProductDetails from './components/ProductDetails';
 
 function App() {
   return (
@@ -38,6 +39,7 @@ function App() {
               <Route path="/orders" element={<OrderHistory />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/payment" element={<Payment />} />
+              <Route path="/product/:id" element={<ProductDetails />} />
             </Routes>
             <ChatBot />
           </div>

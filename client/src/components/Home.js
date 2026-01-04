@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
+import { Link } from 'react-router-dom';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
@@ -61,23 +62,29 @@ const Home = () => {
             </div>
 
             {/* --- PRODUCT GRID --- */}
-            <div className="product-grid">
-                {filteredProducts.map(product => (
+            <div className="products-grid">
+                {products.map(product => (
                     <div key={product._id} className="product-card">
+      
+                    {/* 1. Wrap the Image */}
+                    <Link to={`/product/${product._id}`}>
                         <img src={product.image} alt={product.name} />
-                        <div className="card-body">
+                    </Link>
+      
+                    <div className="card-body">
+                        {/* 2. Wrap the Title */}
+                        <Link to={`/product/${product._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                             <h3>{product.name}</h3>
-                            <p style={{ color: '#7f8c8d', fontSize: '0.9rem' }}>{product.description}</p>
-                            <div className="price-tag">${product.price.toFixed(2)}</div>
-                            <button 
-                                className="btn-primary" 
-                                onClick={() => addToCart(product)}
-                            >
-                                Add to Cart 🛒
-                            </button>
-                        </div>
-                    </div>
-                ))}
+                        </Link>
+
+                    <p>${product.price}</p>
+        
+                    <button onClick={() => addToCart(product)}>
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+            ))}
             </div>
         </div>
     );

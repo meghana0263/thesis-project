@@ -4,7 +4,7 @@ const express = require('express');
 // 1. Create a "Fake" Express App just for testing
 const app = express();
 
-// 2. Define a fake route that mimics your REAL products
+// 2. Define a fake route that mimics REAL products
 app.get('/api/products', (req, res) => {
     res.status(200).json([
         { id: 1, name: 'Fresh Apples', price: 3.50 },
@@ -22,7 +22,7 @@ describe('GET /api/products', () => {
         // CHECK 1: Did the server say "OK"?
         expect(res.statusCode).toEqual(200);
 
-        // CHECK 2: Is the first item Apples? (Now it matches your store!)
+        // CHECK 2: Is the first item Apples? 
         expect(res.body[0].name).toBe('Fresh Apples');
     });
 });

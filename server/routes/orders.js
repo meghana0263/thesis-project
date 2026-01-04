@@ -3,6 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth'); // Import the security guard
 const Order = require('../models/Order');
 const admin = require('../middleware/admin'); // Import admin check
+const Transaction = require('../models/Transaction');
 
 // @route   GET /api/orders
 // @desc    Get all orders (Admin only)
@@ -39,6 +40,19 @@ router.post('/', auth, async (req, res) => {
         });
 
         const createdOrder = await order.save();
+
+        const transaction = new Transaction({
+        order: createdOrder._id,
+        amount: createdOrder.totalPrice,
+        status: 'Completed', // Since we assume payment succeeded
+        paymentResult: { 
+            id: 'SIMULATED_PAYMENT_ID', 
+            status: 'COMPLETED', 
+            email_address: req.user.email 
+        }
+        });
+        await transaction.save();
+
         res.status(201).json(createdOrder);
 
     } catch (err) {

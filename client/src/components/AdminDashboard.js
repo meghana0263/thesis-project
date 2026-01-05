@@ -2,14 +2,13 @@ import React, { useState, useEffect, useMemo } from 'react';
 import axios from 'axios';
 import { 
     ComposedChart, Line, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-    PieChart, Pie, Cell
+    Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
 
 const AdminDashboard = () => {
     const [products, setProducts] = useState([]);
     const [orders, setOrders] = useState([]);
-    const [timeRange, setTimeRange] = useState('all'); // 'all', '7days', '30days'
+    const [timeRange, setTimeRange] = useState('all'); 
 
     // Form State
     const [formData, setFormData] = useState({
@@ -34,9 +33,22 @@ const AdminDashboard = () => {
         catch (err) { console.error(err); }
     };
 
-    // --- 🧠 SMART ANALYTICS ENGINE ---
+    //  DELETE FUNCTION
+    const deleteHandler = async (id) => {
+        if (window.confirm('Are you sure you want to delete this product?')) {
+            try {
+                const token = localStorage.getItem('token');
+                const config = { headers: { 'x-auth-token': token } };
+                await axios.delete(`/api/products/${id}`, config);
+                alert('Product Deleted');
+                fetchProducts(); // Refresh list immediately
+            } catch (error) {
+                alert('Error deleting product');
+            }
+        }
+    };
 
-    // Filter Orders based on Time Range
+    // --- ANALYTICS LOGIC  ---
     const filteredOrders = useMemo(() => {
         if (timeRange === 'all') return orders;
         const now = new Date();
@@ -45,11 +57,9 @@ const AdminDashboard = () => {
         return orders.filter(o => new Date(o.createdAt) >= cutoff);
     }, [orders, timeRange]);
 
-    // 1. KPI Cards
     const totalRevenue = filteredOrders.reduce((acc, order) => acc + order.totalPrice, 0);
     const avgOrderValue = filteredOrders.length ? (totalRevenue / filteredOrders.length) : 0;
 
-    // 2. Composed Chart Data (Revenue vs Count)
     const composedData = useMemo(() => {
         const group = filteredOrders.reduce((acc, order) => {
             const date = new Date(order.createdAt).toLocaleDateString();
@@ -58,20 +68,16 @@ const AdminDashboard = () => {
             acc[date].count += 1;
             return acc;
         }, {});
-        return Object.values(group).reverse(); // Show chronological
+        return Object.values(group).reverse();
     }, [filteredOrders]);
 
-    // 3. Radar Chart Data (Category Performance)
     const radarData = useMemo(() => {
         const stats = {};
         products.forEach(p => {
             if (!stats[p.category]) stats[p.category] = { subject: p.category, A: 0, fullMark: 100 };
         });
-        // Count how many orders contain products from this category
         orders.forEach(o => {
             o.orderItems.forEach(item => {
-                // We need to match item name back to category (simplified for demo)
-                // ideally orderItems should save category, but let's approximate:
                 const prod = products.find(p => p._id === item.product);
                 if (prod && stats[prod.category]) {
                     stats[prod.category].A += item.qty;
@@ -81,11 +87,8 @@ const AdminDashboard = () => {
         return Object.values(stats);
     }, [products, orders]);
 
-    // Colors
-    const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
-
-    // Form Handlers
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
+    
     const onSubmit = async e => {
         e.preventDefault();
         const token = localStorage.getItem('token');
@@ -95,30 +98,23 @@ const AdminDashboard = () => {
             alert('Product Added!');
             setFormData({ name: '', price: '', image: '', description: '', category: '', countInStock: '' });
             fetchProducts();
-        } catch (err) { alert('Error adding product'); }
+        } catch (err) { 
+            alert(err.response?.data?.message || 'Error adding product'); 
+        }
     };
 
     return (
         <div style={{ padding: '30px', maxWidth: '1600px', margin: '0 auto', background: '#f0f2f5', minHeight: '100vh', fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" }}>
             
-            {/* HEADER WITH CONTROLS */}
+            {/* HEADER */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
                 <h1 style={{ color: '#1a365d', margin: 0 }}>📊 Executive Analytics</h1>
-                <div style={{ background: 'white', padding: '5px', borderRadius: '8px', boxShadow: '0 2px 5px rgba(0,0,0,0.05)' }}>
+                <div style={{ background: 'white', padding: '5px', borderRadius: '8px' }}>
                     {['all', '30days', '7days'].map(range => (
                         <button 
                             key={range}
                             onClick={() => setTimeRange(range)}
-                            style={{
-                                padding: '8px 16px',
-                                border: 'none',
-                                background: timeRange === range ? '#2b6cb0' : 'transparent',
-                                color: timeRange === range ? 'white' : '#718096',
-                                borderRadius: '6px',
-                                cursor: 'pointer',
-                                fontWeight: '600',
-                                textTransform: 'capitalize'
-                            }}
+                            style={{ padding: '8px 16px', border: 'none', background: timeRange === range ? '#2b6cb0' : 'transparent', color: timeRange === range ? 'white' : '#718096', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', textTransform: 'capitalize' }}
                         >
                             {range === 'all' ? 'All Time' : range.replace('days', ' Days')}
                         </button>
@@ -126,7 +122,7 @@ const AdminDashboard = () => {
                 </div>
             </div>
 
-            {/* KPI ROW */}
+            {/* KPI CARDS */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '30px' }}>
                 <KpiCard title="Total Revenue" value={`$${totalRevenue.toFixed(2)}`} icon="💰" color="#48bb78" />
                 <KpiCard title="Total Orders" value={filteredOrders.length} icon="📦" color="#4299e1" />
@@ -134,30 +130,27 @@ const AdminDashboard = () => {
                 <KpiCard title="Products Active" value={products.length} icon="🍎" color="#9f7aea" />
             </div>
 
-            {/* MAIN CHART ROW */}
+            {/* CHARTS */}
             <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '30px' }}>
-                {/* COMPLEX COMPOSED CHART */}
                 <div style={panelStyle}>
-                    <h3>Revenue & Order Volume (Mixed Trend)</h3>
+                    <h3>Revenue & Order Volume</h3>
                     <div style={{ height: '350px' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <ComposedChart data={composedData}>
                                 <CartesianGrid stroke="#f5f5f5" />
-                                <XAxis dataKey="date" scale="point" padding={{ left: 20, right: 20 }} />
+                                <XAxis dataKey="date" />
                                 <YAxis yAxisId="left" orientation="left" stroke="#2b6cb0" />
                                 <YAxis yAxisId="right" orientation="right" stroke="#f6ad55" />
-                                <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}/>
+                                <Tooltip />
                                 <Legend />
-                                <Bar yAxisId="left" dataKey="revenue" barSize={20} fill="#2b6cb0" name="Revenue ($)" radius={[4, 4, 0, 0]} />
+                                <Bar yAxisId="left" dataKey="revenue" barSize={20} fill="#2b6cb0" name="Revenue ($)" />
                                 <Line yAxisId="right" type="monotone" dataKey="count" stroke="#f6ad55" strokeWidth={3} name="Orders (#)" />
                             </ComposedChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
-
-                {/* RADAR CHART (EUROSTAT STYLE) */}
                 <div style={panelStyle}>
-                    <h3>Category Performance (Radar)</h3>
+                    <h3>Category Performance</h3>
                     <div style={{ height: '350px' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <RadarChart outerRadius={90} data={radarData}>
@@ -175,6 +168,7 @@ const AdminDashboard = () => {
 
             {/* MANAGEMENT SECTION */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '20px' }}>
+                {/* ADD PRODUCT FORM */}
                 <div style={panelStyle}>
                     <h3>Add New Product</h3>
                     <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -188,11 +182,13 @@ const AdminDashboard = () => {
                             <option value="Beverages">Beverages</option>
                         </select>
                         <input name="countInStock" placeholder="Stock" value={countInStock} onChange={onChange} required style={inputStyle} />
+                        <textarea name="description" placeholder="Description" value={description} onChange={onChange} required style={{ ...inputStyle, height: '80px', fontFamily: 'inherit' }} />
                         <input name="image" placeholder="Image URL" value={image} onChange={onChange} required style={inputStyle} />
                         <button type="submit" style={btnStyle}>Add Product</button>
                     </form>
                 </div>
 
+                {/* INVENTORY LIST (WITH DELETE BUTTON) */}
                 <div style={panelStyle}>
                     <h3>Inventory Status</h3>
                     <div style={{ overflowY: 'auto', maxHeight: '300px' }}>
@@ -200,18 +196,34 @@ const AdminDashboard = () => {
                             <thead>
                                 <tr style={{ background: '#f7fafc', textAlign: 'left' }}>
                                     <th style={{ padding: '10px' }}>Product</th>
-                                    <th style={{ padding: '10px' }}>Category</th>
-                                    <th style={{ padding: '10px' }}>Stock</th>
                                     <th style={{ padding: '10px' }}>Price</th>
+                                    <th style={{ padding: '10px' }}>Stock</th>
+                                    <th style={{ padding: '10px' }}>Action</th> 
                                 </tr>
                             </thead>
                             <tbody>
                                 {products.map(p => (
                                     <tr key={p._id} style={{ borderBottom: '1px solid #eee' }}>
                                         <td style={{ padding: '10px' }}>{p.name}</td>
-                                        <td style={{ padding: '10px' }}><span style={{ background: '#bee3f8', padding: '2px 8px', borderRadius: '10px', fontSize: '0.8rem', color: '#2b6cb0' }}>{p.category}</span></td>
-                                        <td style={{ padding: '10px', color: p.countInStock < 5 ? 'red' : 'green' }}>{p.countInStock} units</td>
                                         <td style={{ padding: '10px' }}>${p.price}</td>
+                                        <td style={{ padding: '10px', color: p.countInStock < 5 ? 'red' : 'green' }}>{p.countInStock}</td>
+                                        
+                                        {/* 👇 DELETE BUTTON */}
+                                        <td style={{ padding: '10px' }}>
+                                            <button 
+                                                onClick={() => deleteHandler(p._id)}
+                                                style={{ 
+                                                    background: '#e53e3e', 
+                                                    color: 'white', 
+                                                    border: 'none', 
+                                                    padding: '5px 10px', 
+                                                    borderRadius: '4px', 
+                                                    cursor: 'pointer' 
+                                                }}
+                                            >
+                                                Delete
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -223,7 +235,7 @@ const AdminDashboard = () => {
     );
 };
 
-// --- STYLED COMPONENTS (Internal) ---
+// --- STYLES ---
 const KpiCard = ({ title, value, icon, color }) => (
     <div style={{ background: 'white', padding: '20px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)', display: 'flex', alignItems: 'center', gap: '15px' }}>
         <div style={{ width: '50px', height: '50px', borderRadius: '50%', background: `${color}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem' }}>{icon}</div>
@@ -233,7 +245,6 @@ const KpiCard = ({ title, value, icon, color }) => (
         </div>
     </div>
 );
-
 const panelStyle = { background: 'white', padding: '25px', borderRadius: '12px', boxShadow: '0 4px 6px rgba(0,0,0,0.05)' };
 const inputStyle = { padding: '10px', borderRadius: '6px', border: '1px solid #e2e8f0', fontSize: '0.95rem' };
 const btnStyle = { padding: '10px', background: '#3182ce', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' };

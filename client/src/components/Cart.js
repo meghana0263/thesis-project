@@ -44,7 +44,7 @@ const Cart = () => {
                         Total: ${totalPrice.toFixed(2)}
                     </h2>
                     
-                    {/* Updated Button with Click Handler */}
+                    
                     <button onClick={checkoutHandler} style={checkoutBtn}>
                         Proceed to Checkout
                     </button>

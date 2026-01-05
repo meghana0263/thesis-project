@@ -29,7 +29,7 @@ const ChatBot = () => {
         }, 600);
     };
 
-    // --- 🤖 THE BRAIN (Rule-Based Logic) ---
+    // ---  THE BRAIN (Rule-Based Logic) ---
     const getBotResponse = (text) => {
         const lower = text.toLowerCase();
         

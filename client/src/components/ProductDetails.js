@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // 1. Get the ID from URL
+import { useParams, useNavigate } from 'react-router-dom'; 
 import axios from 'axios';
 import { CartContext } from '../context/CartContext';
 
 const ProductDetails = () => {
-    const { id } = useParams(); // This gets the 'id' from the URL
+    const { id } = useParams(); 
     const navigate = useNavigate();
     const { addToCart } = useContext(CartContext);
     
@@ -66,7 +66,7 @@ const ProductDetails = () => {
                 </div>
             </div>
 
-            {/* 👇 REVIEW FORM SECTION */}
+            {/*  REVIEW FORM SECTION */}
             <div style={{ marginTop: '50px', background: '#f9f9f9', padding: '30px', borderRadius: '10px' }}>
                 <h3>Write a Customer Review</h3>
                 <form onSubmit={submitHandler}>

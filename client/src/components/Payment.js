@@ -7,7 +7,7 @@ const Payment = () => {
     const navigate = useNavigate();
     const { cart } = useContext(CartContext);
     
-    // Fake state for form visuals
+    
     const [cardData, setCardData] = useState({
         holder: '',
         number: '',
@@ -23,8 +23,6 @@ const Payment = () => {
     const onPay = async (e) => {
         e.preventDefault();
         
-        // Simulating processing delay...
-        // Then we actually create the order in the database
         const token = localStorage.getItem('token');
         if (!token) return navigate('/login');
 
@@ -48,7 +46,6 @@ const Payment = () => {
             alert('Payment Successful! Order Placed.');
             navigate('/orders'); // Send them to Order History
             
-            // Optional: Clear cart logic would go here (need to add to Context later)
 
         } catch (err) {
             console.error(err);
